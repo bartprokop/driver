@@ -1,0 +1,1 @@
+# conf folder contains application configuration
