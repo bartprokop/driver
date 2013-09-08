@@ -3,48 +3,53 @@
  *
  * Created on 21 maj 2004, 09:55
  */
-package name.prokop.bart.hardware.comm;
+package name.prokop.bart.hardware.driver.common;
 
 import java.util.*;
 import gnu.io.*;
+import java.io.IOException;
 import java.util.logging.Level;
-import name.prokop.bart.util.lang.BartException;
 
 /**
  * Klasa pomocnicza do obsługi biblioteki rxtx.<br>
- * Szczegółowe informacje o tej bibliotece znajdują się na http://rxtx.qbang.org/wiki.
- * Biblioteka pochodzi z rxtx.org<br>
+ * Szczegółowe informacje o tej bibliotece znajdują się na
+ * http://rxtx.qbang.org/wiki. Biblioteka pochodzi z rxtx.org<br>
  * <ol>
  * Instalacja biblioteki rxtx pod Windows:<br>
  * <li>Dodaj RXTXcomm.jar do swoijego classpath
- * <li>Plik rxtxSerial.dll i rxtxParallel.dll wgraj do C:\WINDOWS\<B>system32</B>.
+ * <li>Plik rxtxSerial.dll i rxtxParallel.dll wgraj do
+ * C:\WINDOWS\<B>system32</B>.
  * </ol>
  * Powinno działać.<br>
  * <br>
- * To, czy porty szeregowe są prawidłowo rozpoznawalne w naszym systemie można stwierdzić uruchamiając następujące klasy:<br>
+ * To, czy porty szeregowe są prawidłowo rozpoznawalne w naszym systemie można
+ * stwierdzić uruchamiając następujące klasy:<br>
  * <CODE>java -cp "RXTXcomm.jar;bart.jar" name.prokop.bart.hardware.comm.PortEnumerator</CODE>
  *
  * Wynik powinien być mniej więcej taki:<br>
  * <CODE>Stable Library<br>
  * =========================================<br>
  * Native lib Version = RXTX-2.1-7<br>
- * Java lib Version   = RXTX-2.1-7<br>
+ * Java lib Version = RXTX-2.1-7<br>
  * 2 port(ow) szeregowych: COM1 COM2<br>
  * 1 port(ow) rownoleglych: LPT1<br></CODE>
  *
  * Alternatywnie można użyć komendy:
  * <CODE>javaw -cp "RXTXcomm.jar;bart.jar" name.prokop.bart.hardware.comm.AvaiablePortsDialog</CODE>
+ *
  * @author Bartłomiej Prokop
  */
 public class PortEnumerator {
 
     /**
-     * Drukuje na konsoli listę portów szeregowych, jakie biblioteka rxtx znalazła w komputerze.
+     * Drukuje na konsoli listę portów szeregowych, jakie biblioteka rxtx
+     * znalazła w komputerze.
+     *
      * @param args Bez znaczenia
      */
     public static void main(String[] args) {
         String[] portList;
-        
+
         portList = getPortList();
         System.out.print(portList.length);
         System.out.print(" port(ow):");
@@ -54,7 +59,6 @@ public class PortEnumerator {
         System.out.println();
 
         System.out.println("*************************************************");
-        BartException.getLogger().setLevel(Level.OFF);
 
         portList = getSerialPortList();
         System.out.print(portList.length);
@@ -65,7 +69,7 @@ public class PortEnumerator {
                 CommPort p = getSerialPort(portList[i]);
                 p.close();
                 System.out.print("OK");
-            } catch (BartException e) {
+            } catch (Exception e) {
                 System.out.print("nie udało się: " + e.getMessage());
             }
             System.out.println();
@@ -105,7 +109,9 @@ public class PortEnumerator {
 
     /**
      * Zwraca liste portow szeregowych
-     * @return Zwraca liste portow szeregowych. Zwracana jest tablica stringów. Stringi te można użyć w funkcji getSerialPort
+     *
+     * @return Zwraca liste portow szeregowych. Zwracana jest tablica stringów.
+     * Stringi te można użyć w funkcji getSerialPort
      */
     public static String[] getSerialPortList() {
         Enumeration portList;
@@ -135,6 +141,7 @@ public class PortEnumerator {
 
     /**
      * Zwraca liste portow rownoleglych
+     *
      * @return Zwraca liste portow rownoleglych
      */
     public static String[] getParallelPortList() {
@@ -165,11 +172,13 @@ public class PortEnumerator {
 
     /**
      * Zwraca <b>otwarty</b> port szeregowy o zadanej nazwie
+     *
      * @return Zwraca port szeregowy o zadanej nazwie
      * @param portName Nazwa portu
-     * @throws name.prokop.bart.common.BartException W przypadku, gdy nie udało się otworzyć portu szeregowego, wraz z opisem.
+     * @throws name.prokop.bart.common.BartException W przypadku, gdy nie udało
+     * się otworzyć portu szeregowego, wraz z opisem.
      */
-    public static SerialPort getSerialPort(String portName) throws BartException {
+    public static SerialPort getSerialPort(String portName) throws IOException {
         try {
             CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(portName);
             //Enumeration portList = CommPortIdentifier.getPortIdentifiers();
@@ -179,15 +188,15 @@ public class PortEnumerator {
                 }
             }
         } catch (NoSuchPortException e) {
-            throw new BartException("NoSuchPortException @ " + portName, e);
+            throw new IOException("NoSuchPortException @ " + portName, e);
         } catch (PortInUseException e) {
-            throw new BartException("PortInUseException @ " + portName, e);
+            throw new IOException("PortInUseException @ " + portName, e);
         }
 
-        throw new BartException("To nie jest port szeregowy");
+        throw new IOException("To nie jest port szeregowy");
     }
 
-    public static ParallelPort getParallelPort(String portName) throws BartException {
+    public static ParallelPort getParallelPort(String portName) throws IOException {
         try {
             CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(portName);
             if (portId.getPortType() == CommPortIdentifier.PORT_PARALLEL) {
@@ -196,11 +205,11 @@ public class PortEnumerator {
                 }
             }
         } catch (NoSuchPortException e) {
-            throw new BartException("NoSuchPortException @ " + portName + " : " + e.getMessage());
+            throw new IOException("NoSuchPortException @ " + portName + " : " + e.getMessage());
         } catch (PortInUseException e) {
-            throw new BartException("PortInUseException @ " + portName + " : " + e.getMessage());
+            throw new IOException("PortInUseException @ " + portName + " : " + e.getMessage());
         }
 
-        throw new BartException("To nie jest port rwnoległy");
+        throw new IOException("To nie jest port rwnoległy");
     }
 }

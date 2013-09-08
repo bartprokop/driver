@@ -11,7 +11,6 @@ import name.prokop.bart.hardware.driver.Device;
 import name.prokop.bart.hardware.driver.Driver;
 import name.prokop.bart.hardware.driver.DeviceDetectedEvent;
 import name.prokop.bart.hardware.driver.DeviceDropEvent;
-import name.prokop.bart.util.lang.BartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Element;
 
@@ -31,7 +30,7 @@ public class BogusReader implements Runnable, Device {
     /**
      * Creates a new instance of UnicardBus
      */
-    public BogusReader(Element busConf) throws BartException {
+    public BogusReader(Element busConf) {
         this.busName = busConf.getAttribute("name");
     }
 

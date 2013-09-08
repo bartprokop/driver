@@ -2,35 +2,29 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package name.prokop.bart.hardware.driver.rfid.sl500;
+package name.prokop.bart.hardware.driver.rfid.ttd0001v01;
 
 import name.prokop.bart.hardware.driver.common.ToString;
-import name.prokop.bart.hardware.driver.rfid.RFIDCardDetectedProperty;
 import name.prokop.bart.hardware.driver.rfid.RFIDCardType;
 import name.prokop.bart.hardware.driver.rfid.SerialNumberType;
+
+
 
 /**
  *
  * @author bart
  */
-public class TTDevice0002ReadBlock extends TTDevice0002Event implements RFIDCardDetectedProperty {
+public class TTDevice0001v01CardDetected extends TTDevice0001v01Event {
 
     private final RFIDCardType cardType;
     private final byte[] serialNumber;
-    private final byte[] block;
 
-    public TTDevice0002ReadBlock(TTDevice0002 device, RFIDCardType cardType, byte[] serialNumber, byte[] block) {
+    public TTDevice0001v01CardDetected(TTDevice0001v01 device, RFIDCardType cardType, byte[] serialNumber) {
         super(device);
         this.cardType = cardType;
         this.serialNumber = serialNumber;
-        this.block = block;
     }
 
-    public byte[] getBlock() {
-        return block;
-    }
-
-    
     public byte[] getCardSerialNumber() {
         return serialNumber;
     }
@@ -48,11 +42,12 @@ public class TTDevice0002ReadBlock extends TTDevice0002Event implements RFIDCard
     }
 
     public boolean isLocalReader() {
-        return true;
+        return false;
     }
 
     @Override
     public String toString() {
         return super.toString() + " : " + getSerialNumber() + " : " + ToString.byteArrayToString(getCardSerialNumber());
     }
+
 }

@@ -14,9 +14,8 @@ import name.prokop.bart.hardware.driver.Event;
 import name.prokop.bart.hardware.driver.Driver;
 import name.prokop.bart.hardware.driver.DeviceDetectedEvent;
 import name.prokop.bart.hardware.driver.DeviceDropEvent;
-import name.prokop.bart.util.lang.BartException;
+import name.prokop.bart.hardware.driver.common.PortEnumerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.w3c.dom.Element;
 
 /**
  *
@@ -36,17 +35,17 @@ public class SimpleBarCodeReader implements Runnable, Device {
     /**
      * Creates a new instance of UnicardBus
      */
-    public SimpleBarCodeReader(String comPort) throws BartException {
+    public SimpleBarCodeReader(String comPort) throws IOException {
         this.busName = comPort;
 
         if (!initializeSerialPort(comPort)) {
-            throw new BartException("Nie moge zainicjowac portu szeregowego: " + comPort);
+            throw new IOException("Nie moge zainicjowac portu szeregowego: " + comPort);
         }
     }
 
     private boolean initializeSerialPort(String portName) {
         try {
-            serialPort = name.prokop.bart.hardware.comm.PortEnumerator.getSerialPort(portName);
+            serialPort = PortEnumerator.getSerialPort(portName);
         } catch (Exception e) {
             return false;
         }

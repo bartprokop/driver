@@ -14,11 +14,8 @@ import name.prokop.bart.hardware.driver.Driver;
 import name.prokop.bart.hardware.driver.Event;
 import name.prokop.bart.hardware.driver.DeviceDetectedEvent;
 import name.prokop.bart.hardware.driver.DeviceDropEvent;
-import name.prokop.bart.util.ToString;
-import name.prokop.bart.util.lang.BartException;
+import name.prokop.bart.hardware.driver.common.PortEnumerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  *
@@ -37,7 +34,7 @@ public class MikrokontrolaDirectReader implements Runnable, Device {
 
     private boolean initializeSerialPort(String portName) {
         try {
-            serialPort = name.prokop.bart.hardware.comm.PortEnumerator.getSerialPort(portName);
+            serialPort = PortEnumerator.getSerialPort(portName);
         } catch (Exception e) {
             return false;
         }
@@ -82,7 +79,8 @@ public class MikrokontrolaDirectReader implements Runnable, Device {
                     inputStream.read(buf, 0, size);
                     buffer = "";
                     for (int i = 0; i < 5; i++) {
-                        buffer += ToString.byteToHexString(buf[i]);
+//                        buffer += ToString.byteToHexString();
+                        buffer += Integer.toHexString(buf[i]);
                     }
                     buffer += '\n';
                 }

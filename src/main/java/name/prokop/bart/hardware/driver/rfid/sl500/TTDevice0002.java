@@ -9,19 +9,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Logger;
-import name.prokop.bart.hardware.comm.PortEnumerator;
 import name.prokop.bart.hardware.driver.Device;
 import name.prokop.bart.hardware.driver.Driver;
 import name.prokop.bart.hardware.driver.DeviceDetectedEvent;
 import name.prokop.bart.hardware.driver.DeviceDropEvent;
+import name.prokop.bart.hardware.driver.common.BitsAndBytes;
+import name.prokop.bart.hardware.driver.common.PortEnumerator;
+import name.prokop.bart.hardware.driver.common.ToString;
 import name.prokop.bart.hardware.driver.rfid.MifareException;
 import name.prokop.bart.hardware.driver.rfid.MifareReader;
 import name.prokop.bart.hardware.driver.rfid.RFIDCardType;
 import name.prokop.bart.hardware.driver.rfid.ReadBlockAbility;
-import name.prokop.bart.util.ToString;
-import name.prokop.bart.util.lang.BartException;
-import name.prokop.bart.util.lang.BitsAndBytes;
-import name.prokop.bart.util.security.unicard.Ultralight;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -141,11 +139,11 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
         CardSelectedUltralight;
     }
 
-    public TTDevice0002(String portName) throws BartException {
+    public TTDevice0002(String portName) throws IOException {
         try {
             initializeSerialPort(portName);
         } catch (Exception e) {
-            throw new BartException("Nie moge zainicjowac portu szeregowego: " + portName, e);
+            throw new IOException("Nie moge zainicjowac portu szeregowego: " + portName, e);
         }
     }
 
@@ -331,7 +329,6 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
             rfUlSelect();
 
             // VIVO
-            Ultralight u = new Ultralight(currentCardSerialNumber);
             byte[] data = new byte[4];
 
             /*

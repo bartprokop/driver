@@ -130,14 +130,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-                <version>2.0</version>
-            </extension>
-        </extensions>
     </build>
     
     <dependencies>
@@ -147,9 +139,9 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>        
         <dependency>
-            <groupId>bart.prokop.name</groupId>
-            <artifactId>bart-lib</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>14.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.rxtx</groupId>

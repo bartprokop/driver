@@ -7,9 +7,9 @@ package name.prokop.bart.hardware.driver.rfid.tr610.v02;
 import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+import name.prokop.bart.hardware.driver.common.ToString;
 import name.prokop.bart.hardware.driver.rfid.tr610.TTDevice0006;
 import name.prokop.bart.hardware.driver.rfid.tr610.TTDevice0006Server;
-import name.prokop.bart.util.ToString;
 
 /**
  *

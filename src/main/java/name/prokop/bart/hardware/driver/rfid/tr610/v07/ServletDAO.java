@@ -6,13 +6,13 @@ package name.prokop.bart.hardware.driver.rfid.tr610.v07;
 
 import java.io.IOException;
 import java.util.*;
+import name.prokop.bart.hardware.driver.common.BartDate;
+import name.prokop.bart.hardware.driver.common.PostClient;
+import name.prokop.bart.hardware.driver.common.Status;
 import name.prokop.bart.hardware.driver.rfid.tr610.db.TibboCard;
 import name.prokop.bart.hardware.driver.rfid.tr610.db.TibboCardLogEntry;
 import name.prokop.bart.hardware.driver.rfid.tr610.db.TibboDatabase;
 import name.prokop.bart.hardware.driver.rfid.tr610.db.TibboHuman;
-import name.prokop.bart.util.BartDate;
-import name.prokop.bart.util.lang.Status;
-import name.prokop.bart.util.net.http.PostClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

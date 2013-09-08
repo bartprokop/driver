@@ -19,7 +19,6 @@ import name.prokop.bart.hardware.driver.rfid.tr610.v04.TTDevice0006v04;
 import name.prokop.bart.hardware.driver.rfid.tr610.v05.TTDevice0006v05;
 import name.prokop.bart.hardware.driver.rfid.tr610.v06.TTDevice0006v06;
 import name.prokop.bart.hardware.driver.rfid.tr610.v07.TTDevice0006v07;
-import name.prokop.bart.util.lang.BartException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,15 +68,6 @@ public class TTDevice0006Server implements Runnable {
     @PreDestroy
     private void stop() {
         pleaseTerminate = true;
-    }
-
-    private TTDevice0006Server(Element busConf) throws BartException {
-        this.busName = busConf.getAttribute("name");
-        try {
-            initializePort();
-        } catch (Exception e) {
-            throw new BartException("Nie moge portu UDP 2009", e);
-        }
     }
 
     public final void initializePort() throws SocketException {

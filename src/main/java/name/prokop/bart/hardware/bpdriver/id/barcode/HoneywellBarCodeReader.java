@@ -16,7 +16,7 @@ import name.prokop.bart.hardware.driver.Driver;
 import name.prokop.bart.hardware.driver.Event;
 import name.prokop.bart.hardware.driver.DeviceDetectedEvent;
 import name.prokop.bart.hardware.driver.DeviceDropEvent;
-import name.prokop.bart.util.lang.BartException;
+import name.prokop.bart.hardware.driver.common.PortEnumerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Element;
 
@@ -36,21 +36,21 @@ public class HoneywellBarCodeReader implements Runnable, Device {
     private SerialPort serialPort;
     private BufferedReader bufferedReader;
 
-    public HoneywellBarCodeReader(String ip, int port, String name) throws BartException {
+    public HoneywellBarCodeReader(String ip, int port, String name) {
         this.busName = name;
 
         try {
             initSocket(ip, port);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new BartException("Cannot establish network conenction", e);
+            throw new RuntimeException("Cannot establish network conenction", e);
         }
     }
 
     /**
      * Creates a new instance of UnicardBus
      */
-    public HoneywellBarCodeReader(Element busConf) throws BartException {
+    public HoneywellBarCodeReader(Element busConf) {
         this.busName = busConf.getAttribute("name");
 
         try {
@@ -61,25 +61,25 @@ public class HoneywellBarCodeReader implements Runnable, Device {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new BartException("Cannot establish network conenction", e);
+            throw new RuntimeException("Cannot establish network conenction", e);
         }
     }
 
     /**
      * Creates a new instance of UnicardBus
      */
-    private HoneywellBarCodeReader(String comPort) throws BartException, IOException {
+    private HoneywellBarCodeReader(String comPort) throws IOException {
         this.busName = comPort;
 
         if (!initializeSerialPort(comPort)) {
-            throw new BartException("Nie moge zainicjowac portu szeregowego: " + comPort);
+            throw new IOException("Nie moge zainicjowac portu szeregowego: " + comPort);
         }
 
     }
 
     private boolean initializeSerialPort(String portName) throws IOException {
         try {
-            serialPort = name.prokop.bart.hardware.comm.PortEnumerator.getSerialPort(portName);
+            serialPort = PortEnumerator.getSerialPort(portName);
         } catch (Exception e) {
             return false;
         }

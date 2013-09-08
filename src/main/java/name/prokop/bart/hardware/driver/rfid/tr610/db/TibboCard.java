@@ -5,7 +5,7 @@
 package name.prokop.bart.hardware.driver.rfid.tr610.db;
 
 import java.util.List;
-import name.prokop.bart.util.DOMUtil;
+import name.prokop.bart.hardware.driver.common.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

@@ -4,8 +4,6 @@
  */
 package name.prokop.bart.hardware.driver.rfid;
 
-import name.prokop.bart.util.ToString;
-
 /**
  *
  * @author bart
@@ -36,7 +34,7 @@ public enum RFIDCardType {
     public String serialNumberToString(byte[] serialNumber) {
         String retVal = "";
         for (int i = 0; i < serialNumber.length; i++) {
-            retVal += ToString.byteToHexString(serialNumber[i]);
+            retVal += Integer.toHexString(serialNumber[i]);
         }
         return getPrefix() + retVal;
     }

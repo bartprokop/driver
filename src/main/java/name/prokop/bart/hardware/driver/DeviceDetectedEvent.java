@@ -4,9 +4,6 @@
  */
 package name.prokop.bart.hardware.driver;
 
-import name.prokop.bart.hardware.driver.Device;
-import name.prokop.bart.hardware.driver.Event;
-
 /**
  *
  * @author Bart

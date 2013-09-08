@@ -4,10 +4,10 @@
  */
 package name.prokop.bart.hardware.driver.rfid.sl500;
 
+import name.prokop.bart.hardware.driver.common.ToString;
 import name.prokop.bart.hardware.driver.rfid.RFIDCardDetectedProperty;
 import name.prokop.bart.hardware.driver.rfid.RFIDCardType;
 import name.prokop.bart.hardware.driver.rfid.SerialNumberType;
-import name.prokop.bart.util.ToString;
 
 /**
  *
@@ -40,6 +40,7 @@ public class TTDevice0002CardDetected extends TTDevice0002Event implements RFIDC
         return SerialNumberType.RFIDCard;
     }
 
+    @Override
     public boolean isLocalReader() {
         return true;
     }

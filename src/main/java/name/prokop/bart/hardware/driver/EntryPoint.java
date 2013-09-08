@@ -13,6 +13,6 @@ import name.prokop.bart.runtime.RuntimeEngineDaemon;
 public class EntryPoint {
 
     public static void main(String... args) throws Exception {
-        RuntimeEngineDaemon.main(args);
+        RuntimeEngineDaemon.cmdLineEntryPoint();
     }
 }

@@ -11,9 +11,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.table.AbstractTableModel;
 import name.prokop.bart.hardware.driver.*;
+import name.prokop.bart.hardware.driver.common.Network;
+import name.prokop.bart.hardware.driver.common.Status;
 import name.prokop.bart.hardware.driver.rfid.tr610.db.TibboDatabase;
-import name.prokop.bart.util.lang.Status;
-import name.prokop.bart.util.net.Network;
 
 /**
  *

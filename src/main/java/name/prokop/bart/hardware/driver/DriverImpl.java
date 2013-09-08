@@ -36,10 +36,12 @@ public class DriverImpl implements Driver {
      *
      * @param event to add to queue
      */
+    @Override
     public void postEvent(Event event) {
         eventBus.post(event);
     }
 
+    @Override
     public void registerListener(Object o) {
         eventBus.register(o);
     }
@@ -58,12 +60,14 @@ public class DriverImpl implements Driver {
         }
     }
 
+    @Override
     public Device getDevice(String addr) {
         synchronized (devices) {
             return devices.get(addr);
         }
     }
 
+    @Override
     public Map<String, Device> getDevices() {
         synchronized (devices) {
             @SuppressWarnings("unchecked")
