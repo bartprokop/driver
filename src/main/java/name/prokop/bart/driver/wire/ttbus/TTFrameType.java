@@ -1,4 +1,4 @@
-package name.prokop.bart.hardware.driver.bustt;
+package name.prokop.bart.driver.wire.ttbus;
 
 public enum TTFrameType {
 

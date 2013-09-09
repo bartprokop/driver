@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package name.prokop.bart.hardware.driver.bustt;
+package name.prokop.bart.driver.wire.ttbus;
 
 import java.io.IOException;
 import java.util.Random;
@@ -26,26 +26,12 @@ public abstract class TTSoftDevice implements Device {
     protected final TTSoftBus bus;
     private final int id;
     private int lastTransactionId = 0;
+    private final TTSoftConnection connection;
 
-    public TTSoftDevice(TTSoftBus bus, int id) {
+    public TTSoftDevice(TTSoftBus bus, int id, TTSoftConnection connection) {
         this.bus = bus;
         this.id = id;
-    }
-
-    public enum TTSoftDevicePriority {
-
-        /**
-         * Urządzenie odpytywane bez przerwy
-         */
-        High,
-        /**
-         * Urządzenie odpytywane normalnie
-         */
-        Normal,
-        /**
-         * Urządzenie odpytywane rzadko
-         */
-        Low;
+        this.connection = connection;
     }
 
     protected abstract void takeControl();
@@ -56,22 +42,22 @@ public abstract class TTSoftDevice implements Device {
     }
 
     protected final byte[] talk(TTFrame frame) throws IOException {
-        try {
-            frame.setId(id);
-            frame.setCurrTrId(newTransactionId());
-            frame.setPrevTrId(lastTransactionId);
-            byte[] retVal = frame.talk(bus);
-            lastTransactionId = BitsAndBytes.promoteByteToInt(frame.getCurrTrId());
-            return retVal;
-        } catch (IOException ioe) {
-            logger.warning(getDeviceAddress() + " IO error: " + ioe.getMessage());
-            throw ioe;
-        }
+//        try {
+        frame.setId(id);
+        frame.setCurrTrId(newTransactionId());
+        frame.setPrevTrId(lastTransactionId);
+        byte[] retVal = connection.talk(frame);
+        lastTransactionId = BitsAndBytes.promoteByteToInt(frame.getCurrTrId());
+        return retVal;
+//        } catch (IOException ioe) {
+//            logger.warning(getDeviceAddress() + " IO error: " + ioe.getMessage());
+//            throw ioe;
+//    }
     }
 
     public abstract TTSoftDevicePriority getDevicePriority();
 
-    private synchronized final int newTransactionId() {
+    private synchronized int newTransactionId() {
         int retVal;
         do {
             retVal = random.nextInt(256);

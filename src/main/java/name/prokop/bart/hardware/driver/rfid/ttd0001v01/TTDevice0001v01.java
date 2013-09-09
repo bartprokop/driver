@@ -11,10 +11,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import name.prokop.bart.hardware.driver.Device;
 import name.prokop.bart.hardware.driver.DeviceDetectedEvent;
-import name.prokop.bart.hardware.driver.bustt.TTFrame;
-import name.prokop.bart.hardware.driver.bustt.TTFrameType;
-import name.prokop.bart.hardware.driver.bustt.TTSoftBus;
-import name.prokop.bart.hardware.driver.bustt.TTSoftDevice;
+import name.prokop.bart.driver.wire.ttbus.TTFrame;
+import name.prokop.bart.driver.wire.ttbus.TTFrameType;
+import name.prokop.bart.driver.wire.ttbus.TTSoftBus;
+import name.prokop.bart.driver.wire.ttbus.TTSoftConnection;
+import name.prokop.bart.driver.wire.ttbus.TTSoftDevice;
+import name.prokop.bart.driver.wire.ttbus.TTSoftDevicePriority;
 import name.prokop.bart.hardware.driver.common.BitsAndBytes;
 import name.prokop.bart.hardware.driver.common.ToString;
 import name.prokop.bart.hardware.driver.rfid.MifareException;
@@ -70,38 +72,37 @@ public class TTDevice0001v01 extends TTSoftDevice {
 
         Iddle, CardInField;
     }
-    
-    
+
     private synchronized void actualizeInputs() {
-        
+
         try {
             Thread.sleep(20);
         } catch (InterruptedException ex) {
             Logger.getLogger(TTDevice0001v01.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         TTFrame frame = new TTFrame(TTFrameType.Frame1, txGetStatus((byte) (0x00)));
-        
+
         try {
             byte[] state = talk(frame);
-            
+
             byte b = state[2];
-            
+
             this.input1 = ((~b) & 1) == 1;
             this.input2 = ((~b) & 2) == 2;
-               
+
         } catch (IOException e) {
             logger.warning(getDeviceAddress() + " IOEx: " + e.getMessage());
 
         }
     }
 
-    public TTDevice0001v01(TTSoftBus bus, int id) {
-        super(bus, id);
+    public TTDevice0001v01(TTSoftBus bus, int id, TTSoftConnection connection) {
+        super(bus, id, connection);
         driver.postEvent(new DeviceDetectedEvent(this));
-        
+
         //actualizeInputs();
-        
+
     }
 
     @Override
@@ -260,9 +261,9 @@ public class TTDevice0001v01 extends TTSoftDevice {
 
     private static byte[] txWriteDataToBlock(byte keyIdx, byte keyType, byte[] data) {
         return new byte[]{0x05, keyIdx, keyType, data[0], data[1], data[2], data[3],
-                    data[4], data[5], data[6], data[7],
-                    data[8], data[9], data[10], data[11],
-                    data[12], data[13], data[14], data[15]};
+            data[4], data[5], data[6], data[7],
+            data[8], data[9], data[10], data[11],
+            data[12], data[13], data[14], data[15]};
     }
 
     private static byte[] txReadDataFromBlok(byte keyIdx, byte keyType, byte dataIdx) {

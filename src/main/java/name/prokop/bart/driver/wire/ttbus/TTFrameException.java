@@ -1,8 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package name.prokop.bart.hardware.bpdriver.bustt;
+package name.prokop.bart.driver.wire.ttbus;
 
 import java.io.IOException;
 
