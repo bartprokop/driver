@@ -1,37 +1,29 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package name.prokop.bart.driver.wire.ttbus;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import static name.prokop.bart.driver.wire.ttbus.TTFrame.dumpTalkTime;
 import name.prokop.bart.hardware.driver.common.BitsAndBytes;
 import name.prokop.bart.hardware.driver.common.Fletcher16;
 import name.prokop.bart.hardware.driver.common.Word16bit;
 
-/**
- *
- * @author rr163240
- */
 public abstract class TTSoftIOStreamConnection implements TTSoftConnection {
 
-    byte[] talk(InputStream is, OutputStream os, TTFrame frame, int retryCount, int timeout) throws IOException {
+    byte[] talk(InputStream is, OutputStream os, TTFrame frame) throws IOException {
         IOException e = null;
+        int retryCount = frame.getRetryCount();
         while (retryCount-- > 0) {
             try {
                 sleep(15);
                 clearRxBuffer(is);
-                long t = System.currentTimeMillis();
+//                long t = System.currentTimeMillis();
                 send(os, frame);
-                byte[] receive = receive(is, timeout);
-                t = System.currentTimeMillis() - t;
-                if (dumpTalkTime) {
-                    System.err.println(is.getClass().getSimpleName() + " : " + t + " ms");
-                }
+                byte[] receive = receive(is, frame.getTimeout());
+//                t = System.currentTimeMillis() - t;
+//                if (dumpTalkTime) {
+//                    System.err.println(is.getClass().getSimpleName() + " : " + t + " ms");
+//                }
                 return receive;
             } catch (IOException ex) {
                 e = ex;

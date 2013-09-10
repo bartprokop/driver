@@ -10,6 +10,7 @@ package name.prokop.bart.driver.wire.ttbus;
  */
 public interface TTSoftConnection {
 
+    public String getAddress();
     public byte[] talk(TTFrame frame);
     public void close();
 }

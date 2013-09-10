@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package name.prokop.bart.driver.wire.ttbus;
 
 import gnu.io.SerialPort;
@@ -47,9 +43,14 @@ public class TTSoftSerialConnection extends TTSoftIOStreamConnection {
     }
 
     @Override
+    public String getAddress() {
+        return serialPort.getName();
+    }
+
+    @Override
     public byte[] talk(TTFrame frame) {
         try {
-            return talk(inputStream, outputStream, frame, 3, 120);
+            return talk(inputStream, outputStream, frame);
         } catch (IOException e) {
             return null;
         }

@@ -5,6 +5,7 @@
 package name.prokop.bart.hardware.driver.rfid.ttd0001v01;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -13,7 +14,6 @@ import name.prokop.bart.hardware.driver.Device;
 import name.prokop.bart.hardware.driver.DeviceDetectedEvent;
 import name.prokop.bart.driver.wire.ttbus.TTFrame;
 import name.prokop.bart.driver.wire.ttbus.TTFrameType;
-import name.prokop.bart.driver.wire.ttbus.TTSoftBus;
 import name.prokop.bart.driver.wire.ttbus.TTSoftConnection;
 import name.prokop.bart.driver.wire.ttbus.TTSoftDevice;
 import name.prokop.bart.driver.wire.ttbus.TTSoftDevicePriority;
@@ -57,7 +57,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
 
     @Override
     public String getDeviceInfo() {
-        return getDeviceAddress() + " @ " + bus.getBusInfo();
+        return getDeviceAddress() + " @ " + connection.getAddress();
     }
 
     public byte[] readBlock(ClassicKeyType keyType, byte[] key, int blockNumber) throws MifareException {
@@ -97,12 +97,10 @@ public class TTDevice0001v01 extends TTSoftDevice {
         }
     }
 
-    public TTDevice0001v01(TTSoftBus bus, int id, TTSoftConnection connection) {
-        super(bus, id, connection);
-        driver.postEvent(new DeviceDetectedEvent(this));
-
-        //actualizeInputs();
-
+    public TTDevice0001v01(int id, TTSoftConnection connection) {
+        super(id, connection);
+        postEvent(new DeviceDetectedEvent(this));
+//        actualizeInputs();
     }
 
     @Override
@@ -110,6 +108,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
         return TTSoftDevicePriority.High;
     }
 
+    @Override
     public void takeControl() {
         invocationCounter++;
         processOrders();
@@ -121,12 +120,16 @@ public class TTDevice0001v01 extends TTSoftDevice {
             case CardInField:
                 doCardInField();
                 return;
+            default:
+                throw new IllegalStateException();
         }
     }
 
     private void processOrders() {
+        System.out.println(internalOrders.size());
         if (internalOrders.size() > 0) {
             InternalOrder order = internalOrders.remove(0);
+            System.out.println("Odebrano");
 
             if (order instanceof OpenRelay) {
                 OpenRelay or = (OpenRelay) order;
@@ -134,7 +137,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
                 try {
                     talk(frame);
                     TTDevice0001v01RelayOpened e = new TTDevice0001v01RelayOpened(this);
-                    driver.postEvent(e);
+                    postEvent(e);
                 } catch (IOException e) {
                     logger.warning(getDeviceAddress() + " IOEx: " + e.getMessage());
                 }
@@ -179,7 +182,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
                         throw new IllegalStateException();
                 }
                 TTDevice0001v01CardDetected e = new TTDevice0001v01CardDetected(this, currentCardType, currentCardSerialNumber);
-                driver.postEvent(e);
+                postEvent(e);
             }
         } catch (IOException e) {
             logger.warning(getDeviceAddress() + " IOEx: " + e.getMessage());
@@ -197,7 +200,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
             if (state[0] == 0x00) {
                 fmState = FMState.Iddle;
                 TTDevice0001v01CardRemoved e = new TTDevice0001v01CardRemoved(this, currentCardType, currentCardSerialNumber);
-                driver.postEvent(e);
+                postEvent(e);
                 currentCardType = null;
                 currentCardSerialNumber = null;
             }
@@ -213,17 +216,17 @@ public class TTDevice0001v01 extends TTSoftDevice {
 
         // zwarcie (wciśnięcie przycisku)
         if (!input1 && i1) {
-            driver.postEvent(new TTDevice0001v01InputChanged(this, 1, true));
+            postEvent(new TTDevice0001v01InputChanged(this, 1, true));
         }
         if (!input2 && i2) {
-            driver.postEvent(new TTDevice0001v01InputChanged(this, 2, true));
+            postEvent(new TTDevice0001v01InputChanged(this, 2, true));
         }
         // rozwarcie stykow
         if (input1 && !i1) {
-            driver.postEvent(new TTDevice0001v01InputChanged(this, 1, false));
+            postEvent(new TTDevice0001v01InputChanged(this, 1, false));
         }
         if (input2 && !i2) {
-            driver.postEvent(new TTDevice0001v01InputChanged(this, 2, false));
+            postEvent(new TTDevice0001v01InputChanged(this, 2, false));
         }
 
         this.input1 = i1;
@@ -238,6 +241,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
     }
 
     private static byte[] txOpenRelay(byte time) {
+        System.out.println("**************************************");
         return new byte[]{0x02, time};
     }
 
@@ -272,15 +276,15 @@ public class TTDevice0001v01 extends TTSoftDevice {
     ////////////////////////////////////////////////////////////////////////////
     /////////// orders /////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    private List<InternalOrder> internalOrders = new Vector<InternalOrder>();
+    private final List<InternalOrder> internalOrders = new ArrayList<>();
 
     public void openRelay(int time) {
         internalOrders.add(new OpenRelay(BitsAndBytes.castIntToByte(time)));
+        System.out.println("Dodano" + internalOrders.size());
     }
 
     public void setKey() {
         internalOrders.add(new SetKey());
-        System.out.println("Zlecono ustawienie kluczy");
     }
 
     private class InternalOrder {
@@ -288,7 +292,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
 
     private class OpenRelay extends InternalOrder {
 
-        byte time;
+        final byte time;
 
         public OpenRelay(byte time) {
             this.time = time;

@@ -8,8 +8,6 @@ import name.prokop.bart.hardware.driver.common.BitsAndBytes;
  */
 public final class TTFrame {
 
-    public static boolean dumpTalkTime = true;
-    private static final int TIMEOUT = 350;
     static final int BOF = 0xCA;
     private final TTFrameType frameType;
     private byte id;
@@ -17,67 +15,23 @@ public final class TTFrame {
     private byte prevTrId;
     private final byte[] data;
     static final int EOF = 0xAC;
+    private final int retryCount;
+    private final int timeout;
 
     public TTFrame(TTFrameType frameType, byte[] data) {
+        this(frameType, data, 3, 120);
+    }
+
+    public TTFrame(TTFrameType frameType, byte[] data, int retryCount, int timeout) {
         this.frameType = frameType;
         if (data == null) {
             data = new byte[0];
         }
         this.data = data;
+        this.retryCount = retryCount;
+        this.timeout = timeout;
     }
 
-//    private void clearRxBuffer(DatagramSocket datagramSocket) throws IOException {
-//        while (true) {
-//            try {
-//                datagramSocket.setSoTimeout(1);
-//                byte[] receiveData = new byte[256];
-//                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-//                datagramSocket.receive(receivePacket);
-//            } catch (IOException e) {
-//                return;
-//            }
-//        }
-//    }
-//    private void send(SocketAddress socketAddress, DatagramSocket datagramSocket) throws IOException {
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        send(baos);
-//        byte[] byteArray = baos.toByteArray();
-//        DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, socketAddress);
-//        datagramSocket.send(packet);
-//    }
-//    byte[] talk(TTSoftBus bus) throws IOException {
-//        if (bus.getDatagramRemoteSocketAddress() != null && bus.getDatagramSocket() != null) {
-//            return talk(bus.getDatagramRemoteSocketAddress(), bus.getDatagramSocket(), 3, TIMEOUT);
-//        } else {
-//            return talk(bus.getInputStream(), bus.getOutputStream(), 3, TIMEOUT);
-//        }
-//    }
-//
-//    byte[] talk(SocketAddress socketAddress, DatagramSocket datagramSocket, int retryCount, int timeout) throws IOException {
-//        IOException e = null;
-//        while (retryCount-- > 0) {
-//            try {
-//                sleep(15);
-//                clearRxBuffer(datagramSocket);
-//                long t = System.currentTimeMillis();
-//                datagramSocket.setSoTimeout(timeout);
-//                send(socketAddress, datagramSocket);
-//                byte[] receiveData = new byte[256];
-//                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-//                datagramSocket.receive(receivePacket);
-//                byte[] receive = Arrays.copyOfRange(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getOffset() + receivePacket.getLength());
-//                receive = receive(new ByteArrayInputStream(receive), 10);
-//                t = System.currentTimeMillis() - t;
-//                if (dumpTalkTime) {
-//                    System.err.println(socketAddress + " : " + t + " ms");
-//                }
-//                return receive;
-//            } catch (IOException ex) {
-//                e = ex;
-//            }
-//        }
-//        throw new IOException(e);
-//    }
     public TTFrameType getFrameType() {
         return frameType;
     }
@@ -120,5 +74,13 @@ public final class TTFrame {
 
     public byte[] getData() {
         return data;
+    }
+
+    public int getRetryCount() {
+        return retryCount;
+    }
+
+    public int getTimeout() {
+        return timeout;
     }
 }
