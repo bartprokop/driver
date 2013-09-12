@@ -1,15 +1,15 @@
 package name.prokop.bart.driver.wire.ttbus;
 
-import name.prokop.bart.hardware.driver.common.BitsAndBytes;
+import name.prokop.bart.commons.bits.ByteBits;
 
 /**
  *
  * @author Bartłomiej P. Prokop
  */
-public final class TTFrame {
+public final class TTSoftFrame {
 
     static final int BOF = 0xCA;
-    private final TTFrameType frameType;
+    private final TTSoftFrameType frameType;
     private byte id;
     private byte currTrId;
     private byte prevTrId;
@@ -18,11 +18,11 @@ public final class TTFrame {
     private final int retryCount;
     private final int timeout;
 
-    public TTFrame(TTFrameType frameType, byte[] data) {
+    public TTSoftFrame(TTSoftFrameType frameType, byte[] data) {
         this(frameType, data, 3, 120);
     }
 
-    public TTFrame(TTFrameType frameType, byte[] data, int retryCount, int timeout) {
+    public TTSoftFrame(TTSoftFrameType frameType, byte[] data, int retryCount, int timeout) {
         this.frameType = frameType;
         if (data == null) {
             data = new byte[0];
@@ -32,7 +32,7 @@ public final class TTFrame {
         this.timeout = timeout;
     }
 
-    public TTFrameType getFrameType() {
+    public TTSoftFrameType getFrameType() {
         return frameType;
     }
 
@@ -45,7 +45,7 @@ public final class TTFrame {
     }
 
     public void setId(int id) {
-        this.id = BitsAndBytes.castIntToByte(id);
+        this.id = ByteBits.narrow(id);
     }
 
     public byte getCurrTrId() {
@@ -57,7 +57,7 @@ public final class TTFrame {
     }
 
     public void setCurrTrId(int currTrId) {
-        this.currTrId = BitsAndBytes.castIntToByte(currTrId);
+        this.currTrId = ByteBits.narrow(currTrId);
     }
 
     public byte getPrevTrId() {
@@ -69,7 +69,7 @@ public final class TTFrame {
     }
 
     public void setPrevTrId(int prevTrId) {
-        this.prevTrId = BitsAndBytes.castIntToByte(prevTrId);
+        this.prevTrId = ByteBits.narrow(prevTrId);
     }
 
     public byte[] getData() {

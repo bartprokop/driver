@@ -1,6 +1,6 @@
 package name.prokop.bart.driver.wire.ttbus;
 
-public enum TTFrameType {
+public enum TTSoftFrameType {
 
     Frame1((byte) 0x01),
     FramePlugAndPlay((byte) 0x03),
@@ -9,7 +9,7 @@ public enum TTFrameType {
     Frame6((byte) 0x06);
     private byte typeByte;
 
-    private TTFrameType(byte typeByte) {
+    private TTSoftFrameType(byte typeByte) {
         this.typeByte = typeByte;
     }
 
@@ -17,7 +17,7 @@ public enum TTFrameType {
         return typeByte;
     }
 
-    public static TTFrameType fromInt(int type) {
+    public static TTSoftFrameType fromInt(int type) {
         switch (type) {
             case 1:
                 return Frame1;

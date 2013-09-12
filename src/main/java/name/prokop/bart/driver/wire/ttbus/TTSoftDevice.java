@@ -2,9 +2,9 @@ package name.prokop.bart.driver.wire.ttbus;
 
 import java.io.IOException;
 import java.util.Random;
+import name.prokop.bart.commons.bits.IntegerBits;
 import name.prokop.bart.hardware.driver.Device;
 import name.prokop.bart.hardware.driver.Driver;
-import name.prokop.bart.hardware.driver.common.BitsAndBytes;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -42,12 +42,12 @@ public abstract class TTSoftDevice implements Device {
         return connection.getAddress() + ":" + id;
     }
 
-    protected final byte[] talk(TTFrame frame) throws IOException {
+    protected final byte[] talk(TTSoftFrame frame) throws IOException {
         frame.setId(id);
         frame.setCurrTrId(newTransactionId());
         frame.setPrevTrId(lastTransactionId);
         byte[] retVal = connection.talk(frame);
-        lastTransactionId = BitsAndBytes.promoteByteToInt(frame.getCurrTrId());
+        lastTransactionId = IntegerBits.promote(frame.getCurrTrId());
         return retVal;
     }
 

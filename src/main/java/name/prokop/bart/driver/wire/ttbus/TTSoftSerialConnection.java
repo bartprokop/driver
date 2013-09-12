@@ -48,7 +48,7 @@ public class TTSoftSerialConnection extends TTSoftIOStreamConnection {
     }
 
     @Override
-    public byte[] talk(TTFrame frame) {
+    public byte[] talk(TTSoftFrame frame) {
         try {
             return talk(inputStream, outputStream, frame);
         } catch (IOException e) {

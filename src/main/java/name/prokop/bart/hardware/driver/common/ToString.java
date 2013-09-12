@@ -13,6 +13,7 @@ import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import name.prokop.bart.commons.bits.IntegerBits;
 
 /**
  *
@@ -93,7 +94,7 @@ public class ToString {
     public static String arrayToString(Object[] a) {
         StringBuilder retVal = new StringBuilder();
         for (int i = 0; i < a.length; i++) {
-            retVal.append(a[i].toString() + ", ");
+            retVal.append(a[i].toString()).append(", ");
         }
         return retVal.delete(retVal.length() - 2, retVal.length()).toString();
     }
@@ -107,7 +108,7 @@ public class ToString {
     }
 
     public static String byteToHexString(byte b) {
-        int i = BitsAndBytes.promoteByteToInt(b);
+        int i = IntegerBits.promote(b);
         String retVal = "";
         switch (i / 16) {
             case 0:

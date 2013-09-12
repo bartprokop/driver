@@ -9,11 +9,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Logger;
+import name.prokop.bart.commons.bits.ByteBits;
+import name.prokop.bart.commons.bits.IntegerBits;
 import name.prokop.bart.hardware.driver.Device;
 import name.prokop.bart.hardware.driver.Driver;
 import name.prokop.bart.hardware.driver.DeviceDetectedEvent;
 import name.prokop.bart.hardware.driver.DeviceDropEvent;
-import name.prokop.bart.hardware.driver.common.BitsAndBytes;
 import name.prokop.bart.hardware.driver.common.PortEnumerator;
 import name.prokop.bart.hardware.driver.common.ToString;
 import name.prokop.bart.hardware.driver.rfid.MifareException;
@@ -31,7 +32,7 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
     @Autowired
     private Driver driver;
     private String readerModel = "....";
-    private final Object semaphore = new Object();
+//    private final Object semaphore = new Object();
     private boolean needOvertakeControl = false;
     private boolean overtakeControlGranted = false;
     public static final String CONFIG_KEY = TTDevice0002.class.getSimpleName();
@@ -44,6 +45,7 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
     private byte[] currentCardSerialNumber = null;
     private static byte[] SEC_KEY = new byte[]{(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff};
 
+    @Override
     public int compareTo(Device o) {
         return getDeviceAddress().compareTo(o.getDeviceAddress());
     }
@@ -52,14 +54,17 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
         return serialPort.getName();
     }
 
+    @Override
     public String getDeviceDescription() {
         return "TTD-0002 Czytnik desktop MIFARE";
     }
 
+    @Override
     public String getDeviceInfo() {
         return getDeviceAddress() + " / " + serialPort.getName() + " / " + readerModel;
     }
 
+    @Override
     public void readBlock(int blockid) {
         byte[] returval = new byte[0];
         try {
@@ -84,6 +89,7 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
         }
     }
 
+    @Override
     public void writeBlock(int blockid, byte[] data) {
         try {
             writeBlock(ClassicKeyType.KeyA, getSecurityKey(), blockid, data);
@@ -92,6 +98,7 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
         }
     }
 
+    @Override
     public void eraseBlock(int blockid) {
         byte[] trailer = new byte[0];
         try {
@@ -107,6 +114,7 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
         }
     }
 
+    @Override
     public byte[] getSecurityKey() {
         return SEC_KEY;
     }
@@ -359,7 +367,6 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
             driver.postEvent(new TTDevice0002CardRemoved(this, RFIDCardType.MifareUltralight, currentCardSerialNumber));
             backToIdle();
         }
-        //System.exit(0);
     }
     ////////////////////////////////////////////////////////////////////////////
     ///////////// Device functions /////////////////////////////////////////////
@@ -386,7 +393,7 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
      */
     private int rfGetDeviceNumber() throws IOException {
         byte[] dId = talk(serialPort, 0x0301, null);
-        return BitsAndBytes.buildInt((byte) 0, (byte) 0, dId[0], dId[1]);
+        return IntegerBits.build((byte) 0, (byte) 0, dId[0], dId[1]);
     }
 
     /**
@@ -464,7 +471,7 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
      */
     private int rfRequest(byte mode) throws IOException {
         byte[] talk = talk(serialPort, 0x0102, new byte[]{mode});
-        return BitsAndBytes.promoteByteToInt(talk[0]) << 8 + BitsAndBytes.promoteByteToInt(talk[1]);
+        return IntegerBits.promote(talk[0]) << 8 + IntegerBits.promote(talk[1]);
     }
 
     /**
@@ -559,10 +566,10 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
     private void rfM1Initval(byte blockAddress, int value) throws IOException {
         byte[] frame = new byte[5];
         frame[0] = blockAddress;
-        frame[1] = BitsAndBytes.extractByte(value, 0);
-        frame[2] = BitsAndBytes.extractByte(value, 1);
-        frame[3] = BitsAndBytes.extractByte(value, 2);
-        frame[4] = BitsAndBytes.extractByte(value, 3);
+        frame[1] = ByteBits.extract(value, 0);
+        frame[2] = ByteBits.extract(value, 1);
+        frame[3] = ByteBits.extract(value, 2);
+        frame[4] = ByteBits.extract(value, 3);
         talk(serialPort, 0x0A02, frame);
     }
 
@@ -576,10 +583,10 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
     private void rfM1Decrement(byte blockAddress, int value) throws IOException {
         byte[] frame = new byte[5];
         frame[0] = blockAddress;
-        frame[1] = BitsAndBytes.extractByte(value, 0);
-        frame[2] = BitsAndBytes.extractByte(value, 1);
-        frame[3] = BitsAndBytes.extractByte(value, 2);
-        frame[4] = BitsAndBytes.extractByte(value, 3);
+        frame[1] = ByteBits.extract(value, 0);
+        frame[2] = ByteBits.extract(value, 1);
+        frame[3] = ByteBits.extract(value, 2);
+        frame[4] = ByteBits.extract(value, 3);
         talk(serialPort, 0x0C02, frame);
     }
 
@@ -593,10 +600,10 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
     private void rfM1Increment(byte blockAddress, int value) throws IOException {
         byte[] frame = new byte[5];
         frame[0] = blockAddress;
-        frame[1] = BitsAndBytes.extractByte(value, 0);
-        frame[2] = BitsAndBytes.extractByte(value, 1);
-        frame[3] = BitsAndBytes.extractByte(value, 2);
-        frame[4] = BitsAndBytes.extractByte(value, 3);
+        frame[1] = ByteBits.extract(value, 0);
+        frame[2] = ByteBits.extract(value, 1);
+        frame[3] = ByteBits.extract(value, 2);
+        frame[4] = ByteBits.extract(value, 3);
         talk(serialPort, 0x0D02, frame);
     }
 
@@ -639,7 +646,6 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
 
         public StatusException(String message) {
             super(message);
-            //System.err.println(message);
         }
     }
 
@@ -678,7 +684,7 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
         outputStream.write(0x00); // id
         outputStream.write(0x00); // id
         for (byte b : frame) {
-            int i = BitsAndBytes.promoteByteToInt(b);
+            int i = IntegerBits.promote(b);
             outputStream.write(i);
             if (i == 0xaa) {
                 outputStream.write(0x00);
@@ -717,7 +723,7 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
 
         waitForData(inputStream, 10, 2);
         retVal = read(inputStream, 2);
-        int length = BitsAndBytes.promoteByteToInt(retVal[0]);
+        int length = IntegerBits.promote(retVal[0]);
 
         waitForData(inputStream, 100, length);
         retVal = read(inputStream, length - 1);
@@ -733,8 +739,8 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
         }
 
         byte[] q = new byte[data.length + 2];
-        q[0] = BitsAndBytes.extractByte(command, 1);
-        q[1] = BitsAndBytes.extractByte(command, 0);
+        q[0] = ByteBits.extract(command, 1);
+        q[1] = ByteBits.extract(command, 0);
         System.arraycopy(data, 0, q, 2, data.length);
 
         send(serialPort, q);
@@ -845,11 +851,11 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
                 rfAnticoll();
                 rfSelect(currentCardSerialNumber);
                 if (keyType == ClassicKeyType.KeyA) {
-                    rfM1Authentication2(KEY_TYPE_A, BitsAndBytes.castIntToByte(blockNumber), key);
+                    rfM1Authentication2(KEY_TYPE_A, ByteBits.narrow(blockNumber), key);
                 } else {
-                    rfM1Authentication2(KEY_TYPE_B, BitsAndBytes.castIntToByte(blockNumber), key);
+                    rfM1Authentication2(KEY_TYPE_B, ByteBits.narrow(blockNumber), key);
                 }
-                byte[] result = rfM1Read(BitsAndBytes.castIntToByte(blockNumber));
+                byte[] result = rfM1Read(ByteBits.narrow(blockNumber));
                 rfHalt();
                 return result;
             } catch (IOException ioe) {
@@ -884,11 +890,11 @@ public class TTDevice0002 implements Device, MifareReader, ReadBlockAbility {
                 rfAnticoll();
                 rfSelect(currentCardSerialNumber);
                 if (keyType == ClassicKeyType.KeyA) {
-                    rfM1Authentication2(KEY_TYPE_A, BitsAndBytes.castIntToByte(blockNumber), key);
+                    rfM1Authentication2(KEY_TYPE_A, ByteBits.narrow(blockNumber), key);
                 } else {
-                    rfM1Authentication2(KEY_TYPE_B, BitsAndBytes.castIntToByte(blockNumber), key);
+                    rfM1Authentication2(KEY_TYPE_B, ByteBits.narrow(blockNumber), key);
                 }
-                rfM1Write(BitsAndBytes.castIntToByte(blockNumber), data);
+                rfM1Write(ByteBits.narrow(blockNumber), data);
                 rfHalt();
             } catch (IOException ioe) {
                 throw new MifareException(ioe);

@@ -44,7 +44,7 @@ public class TTSoftBus implements Runnable {
             if (id % 20 == 0) {
                 System.out.println();
             }
-            TTFrame frame = new TTFrame(TTFrameType.FramePlugAndPlay, null, 1, 120);
+            TTSoftFrame frame = new TTSoftFrame(TTSoftFrameType.FramePlugAndPlay, null, 1, 120);
             frame.setId(id);
             byte[] answer = connection.talk(frame);
             if (answer != null) {

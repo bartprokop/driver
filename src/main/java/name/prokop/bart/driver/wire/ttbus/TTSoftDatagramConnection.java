@@ -14,6 +14,16 @@ public class TTSoftDatagramConnection implements TTSoftConnection {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+//    private static void discoverDevice(int id, SocketAddress sa, DatagramSocket ds) throws Exception {
+//        TTFrame frame = new TTFrame(TTFrameType.FramePlugAndPlay, null);
+//        frame.setId(id);
+//        try {
+//            byte[] answer = frame.talk(sa, ds, 1, 120);
+//            discoverDevice(id, answer);
+//        } catch (IOException e) {
+//            System.out.println("Unsuccessful query @ " + id);
+//        }
+//    }
 //    private static void discoverBusDevices(String udpHost, int remote, int local) throws Exception {
 //        DatagramSocket ds = new DatagramSocket(local);
 //        SocketAddress sa = new InetSocketAddress(udpHost, remote);
@@ -79,7 +89,7 @@ public class TTSoftDatagramConnection implements TTSoftConnection {
 //        throw new IOException(e);
 //    }
     @Override
-    public byte[] talk(TTFrame frame) {
+    public byte[] talk(TTSoftFrame frame) {
         return null;
     }
 

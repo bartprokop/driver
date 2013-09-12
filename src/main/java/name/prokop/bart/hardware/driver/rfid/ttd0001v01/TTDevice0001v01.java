@@ -10,10 +10,11 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import name.prokop.bart.commons.bits.ByteBits;
 import name.prokop.bart.hardware.driver.Device;
 import name.prokop.bart.hardware.driver.DeviceDetectedEvent;
-import name.prokop.bart.driver.wire.ttbus.TTFrame;
-import name.prokop.bart.driver.wire.ttbus.TTFrameType;
+import name.prokop.bart.driver.wire.ttbus.TTSoftFrame;
+import name.prokop.bart.driver.wire.ttbus.TTSoftFrameType;
 import name.prokop.bart.driver.wire.ttbus.TTSoftConnection;
 import name.prokop.bart.driver.wire.ttbus.TTSoftDevice;
 import name.prokop.bart.driver.wire.ttbus.TTSoftDevicePriority;
@@ -81,7 +82,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
             Logger.getLogger(TTDevice0001v01.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        TTFrame frame = new TTFrame(TTFrameType.Frame1, txGetStatus((byte) (0x00)));
+        TTSoftFrame frame = new TTSoftFrame(TTSoftFrameType.Frame1, txGetStatus((byte) (0x00)));
 
         try {
             byte[] state = talk(frame);
@@ -126,14 +127,12 @@ public class TTDevice0001v01 extends TTSoftDevice {
     }
 
     private void processOrders() {
-        System.out.println(internalOrders.size());
         if (internalOrders.size() > 0) {
             InternalOrder order = internalOrders.remove(0);
-            System.out.println("Odebrano");
 
             if (order instanceof OpenRelay) {
                 OpenRelay or = (OpenRelay) order;
-                TTFrame frame = new TTFrame(TTFrameType.Frame1, txOpenRelay(or.time));
+                TTSoftFrame frame = new TTSoftFrame(TTSoftFrameType.Frame1, txOpenRelay(or.time));
                 try {
                     talk(frame);
                     TTDevice0001v01RelayOpened e = new TTDevice0001v01RelayOpened(this);
@@ -145,7 +144,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
 
             if (order instanceof SetKey) {
                 SetKey sk = (SetKey) order;
-                TTFrame frame = new TTFrame(TTFrameType.Frame1, txLoadKeyE2((byte) 0, new byte[]{(byte) 0xB5, (byte) 0x72, (byte) 0x56, (byte) 0xEB, (byte) 0xD4, (byte) 0x4A}));
+                TTSoftFrame frame = new TTSoftFrame(TTSoftFrameType.Frame1, txLoadKeyE2((byte) 0, new byte[]{(byte) 0xB5, (byte) 0x72, (byte) 0x56, (byte) 0xEB, (byte) 0xD4, (byte) 0x4A}));
                 try {
                     byte[] talk = talk(frame);
                     System.out.println("RES: " + ToString.byteArrayToString(talk));
@@ -157,7 +156,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
     }
 
     private void doIddle() {
-        TTFrame frame = new TTFrame(TTFrameType.Frame1, txGetStatus((byte) (invocationCounter % 2)));
+        TTSoftFrame frame = new TTSoftFrame(TTSoftFrameType.Frame1, txGetStatus((byte) (invocationCounter % 2)));
         try {
             byte[] state = talk(frame);
             analyseInputs(state[2]);
@@ -192,7 +191,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
 
     private void doCardInField() {
         //TTFrame frame = new TTFrame(TTFrameType.Frame1, txGetStatus((byte) 2));
-        TTFrame frame = new TTFrame(TTFrameType.Frame1, txGetStatus((byte) (invocationCounter % 2)));
+        TTSoftFrame frame = new TTSoftFrame(TTSoftFrameType.Frame1, txGetStatus((byte) (invocationCounter % 2)));
         try {
             byte[] state = talk(frame);
             analyseInputs(state[2]);
@@ -241,7 +240,6 @@ public class TTDevice0001v01 extends TTSoftDevice {
     }
 
     private static byte[] txOpenRelay(byte time) {
-        System.out.println("**************************************");
         return new byte[]{0x02, time};
     }
 
@@ -250,7 +248,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
     }
 
     private static byte[] txWritePage(byte addr, int data) {
-        return new byte[]{0x04, addr, BitsAndBytes.extractByte(data, 3), BitsAndBytes.extractByte(data, 2), BitsAndBytes.extractByte(data, 1), BitsAndBytes.extractByte(data, 0)};
+        return new byte[]{0x04, addr, ByteBits.extract(data, 3), ByteBits.extract(data, 2), ByteBits.extract(data, 1), ByteBits.extract(data, 0)};
     }
 
     private static byte[] txWritePage(byte addr, byte[] data) {
@@ -279,8 +277,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
     private final List<InternalOrder> internalOrders = new ArrayList<>();
 
     public void openRelay(int time) {
-        internalOrders.add(new OpenRelay(BitsAndBytes.castIntToByte(time)));
-        System.out.println("Dodano" + internalOrders.size());
+        internalOrders.add(new OpenRelay(ByteBits.narrow(time)));
     }
 
     public void setKey() {
