@@ -17,7 +17,8 @@ public class TTSoftBus implements Runnable {
     private final TTSoftConnection connection;
 
     public static void main(String... args) throws Exception {
-        TTSoftConnection c = TTSoftSerialConnection.getConnection("COM1");
+//        TTSoftConnection c = TTSoftSerialConnection.getConnection("COM1");
+        TTSoftConnection c = TTSoftSocketConnection.getConnection("192.168.146.175", 4001);
         TTSoftBus ttSoftBus = new TTSoftBus(c);
         TTDevice0001v01 ttDevice0001v01 = new TTDevice0001v01(1, c);
         ttSoftBus.devices.add(ttDevice0001v01);

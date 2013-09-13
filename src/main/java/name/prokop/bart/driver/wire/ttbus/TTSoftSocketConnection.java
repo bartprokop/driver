@@ -10,9 +10,11 @@ import java.net.Socket;
 public class TTSoftSocketConnection extends TTSoftIOStreamConnection {
 
     private Socket socket = null;
+    private String hostName;
+    private int port;
 
     public static void main(String... args) throws Exception {
-        TTSoftConnection connection = getConnection("xxx", 4000);
+        TTSoftConnection connection = getConnection("192.168.146.175", 4001);
         try {
             TTSoftBus.discoverDevices(connection);
         } finally {
@@ -25,23 +27,43 @@ public class TTSoftSocketConnection extends TTSoftIOStreamConnection {
     }
 
     private TTSoftSocketConnection(String hostName, int port) {
-        try {
-            socket = new Socket(hostName, port);
-        } catch (IOException e) {
-        }
+        this.hostName = hostName;
+        this.port = port;
     }
 
     @Override
     public String getAddress() {
-        return socket.getInetAddress().getHostName();
+        return hostName + ":" + port;
     }
 
     @Override
     public byte[] talk(TTSoftFrame frame) {
-        return null;
+        try {
+            if (socket == null) {
+                socket = new Socket(hostName, port);
+            }
+            return talk(socket.getInputStream(), socket.getOutputStream(), frame);
+        } catch (IOException e) {
+            close();
+        }
+        try {
+            socket = new Socket(hostName, port);
+            return talk(socket.getInputStream(), socket.getOutputStream(), frame);
+        } catch (IOException e) {
+            close();
+            return null;
+        }
     }
 
     @Override
     public void close() {
+        if (socket != null) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+            } finally {
+                socket = null;
+            }
+        }
     }
 }
