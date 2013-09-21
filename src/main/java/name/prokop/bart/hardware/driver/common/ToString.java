@@ -17,7 +17,7 @@ import name.prokop.bart.commons.bits.IntegerBits;
 
 /**
  *
- * @author  Bart
+ * @author Bart
  */
 public class ToString {
 
@@ -72,6 +72,9 @@ public class ToString {
     }
 
     public static String byteArrayToString(byte[] a) {
+        if (a == null) {
+            return "null";
+        }
         return byteArrayToString(a, 0, a.length);
     }
 
@@ -227,8 +230,9 @@ public class ToString {
     }
 
     /**
-     * Standard                    Ą   Ć   Ę   Ł   Ń   Ó   Ś   Ź   Ż   ą   ć   ę   ł   ń   ó   ś   ź   ż
-     * Mazovia                    143 149 144 156 165 163 152 160 161 134 141 145 146 164 162 158 166 167
+     * Standard Ą Ć Ę Ł Ń Ó Ś Ź Ż ą ć ę ł ń ó ś ź ż Mazovia 143 149 144 156 165
+     * 163 152 160 161 134 141 145 146 164 162 158 166 167
+     *
      * @param s String value to convert from UNICODE to Mazovia
      * @return table of characters encoded in MAZOVIA.
      */

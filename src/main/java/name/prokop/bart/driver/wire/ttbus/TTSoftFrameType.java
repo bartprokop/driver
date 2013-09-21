@@ -3,6 +3,7 @@ package name.prokop.bart.driver.wire.ttbus;
 public enum TTSoftFrameType {
 
     Frame1((byte) 0x01),
+    FrameConfiguration((byte) 0x02),
     FramePlugAndPlay((byte) 0x03),
     Frame4((byte) 0x04),
     Frame5((byte) 0x05),

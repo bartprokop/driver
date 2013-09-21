@@ -7,10 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import name.prokop.bart.hardware.driver.common.PortEnumerator;
 
-/**
- *
- * @author rr163240
- */
 public class TTSoftSerialConnection extends TTSoftIOStreamConnection {
 
     private final SerialPort serialPort;

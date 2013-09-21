@@ -6,8 +6,9 @@ import name.prokop.bart.hardware.driver.common.BitsAndBytes;
 import name.prokop.bart.hardware.driver.rfid.ttd0001v01.TTDevice0001v01;
 
 /**
- *
- * @author bart
+ * This class encapsulates the communication with TT Soft MIFARE reader.
+ * 
+ * @author Bartłomiej Bart Prokop
  */
 public class TTSoftBus implements Runnable {
 
@@ -17,8 +18,8 @@ public class TTSoftBus implements Runnable {
     private final TTSoftConnection connection;
 
     public static void main(String... args) throws Exception {
-//        TTSoftConnection c = TTSoftSerialConnection.getConnection("COM1");
-        TTSoftConnection c = TTSoftSocketConnection.getConnection("192.168.146.175", 4001);
+        TTSoftConnection c = TTSoftSerialConnection.getConnection("COM1");
+//        TTSoftConnection c = TTSoftSocketConnection.getConnection("192.168.146.175", 4001);
         TTSoftBus ttSoftBus = new TTSoftBus(c);
         TTDevice0001v01 ttDevice0001v01 = new TTDevice0001v01(1, c);
         ttSoftBus.devices.add(ttDevice0001v01);
