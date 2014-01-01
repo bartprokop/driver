@@ -7,7 +7,6 @@ package name.prokop.bart.hardware.driver.rfid.ttd0001v01;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import name.prokop.bart.commons.bits.ByteBits;
@@ -93,8 +92,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
             this.input2 = ((~b) & 2) == 2;
 
         } catch (IOException e) {
-            logger.warning(getDeviceAddress() + " IOEx: " + e.getMessage());
-
+            logger.log(Level.WARNING, "{0} IOEx: {1}", new Object[]{getDeviceAddress(), e.getMessage()});
         }
     }
 
@@ -138,7 +136,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
                     TTDevice0001v01RelayOpened e = new TTDevice0001v01RelayOpened(this);
                     postEvent(e);
                 } catch (IOException e) {
-                    logger.warning(getDeviceAddress() + " IOEx: " + e.getMessage());
+                    logger.log(Level.WARNING, "{0} IOEx: {1}", new Object[]{getDeviceAddress(), e.getMessage()});
                 }
             }
 
@@ -149,7 +147,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
                     byte[] talk = talk(frame);
                     System.out.println("RES: " + ToString.byteArrayToString(talk));
                 } catch (IOException e) {
-                    logger.warning(getDeviceAddress() + " IOEx: " + e.getMessage());
+                    logger.log(Level.WARNING, "{0} IOEx: {1}", new Object[]{getDeviceAddress(), e.getMessage()});
                 }
             }
         }
@@ -184,8 +182,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
                 postEvent(e);
             }
         } catch (IOException e) {
-            logger.warning(getDeviceAddress() + " IOEx: " + e.getMessage());
-
+            logger.log(Level.WARNING, "{0} IOEx: {1}", new Object[]{getDeviceAddress(), e.getMessage()});
         }
     }
 
@@ -204,8 +201,7 @@ public class TTDevice0001v01 extends TTSoftDevice {
                 currentCardSerialNumber = null;
             }
         } catch (IOException e) {
-            logger.warning(getDeviceAddress() + " IOEx: " + e.getMessage());
-
+            logger.log(Level.WARNING, "{0} IOEx: {1}", new Object[]{getDeviceAddress(), e.getMessage()});
         }
     }
 

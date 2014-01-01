@@ -12,7 +12,7 @@ import name.prokop.bart.hardware.driver.rfid.ttd0001v01.TTDevice0001v01;
  */
 public class TTSoftBus implements Runnable {
 
-    private List<TTSoftDevice> devices = new ArrayList<>();
+    private final List<TTSoftDevice> devices = new ArrayList<>();
     private boolean pleaseTerminate = false;
     private boolean terminated = false;
     private final TTSoftConnection connection;
@@ -23,6 +23,7 @@ public class TTSoftBus implements Runnable {
         TTSoftBus ttSoftBus = new TTSoftBus(c);
         TTDevice0001v01 ttDevice0001v01 = new TTDevice0001v01(1, c);
         ttSoftBus.devices.add(ttDevice0001v01);
+        ttSoftBus.devices.add(new TTDevice0001v01(8, c));
         new Thread(ttSoftBus).start();
         Thread.sleep(2000);
         ttDevice0001v01.openRelay(60);
@@ -80,6 +81,7 @@ public class TTSoftBus implements Runnable {
         System.out.println("\nDetected @ " + id + " : type: " + type + " v. " + ver + " s/n " + sn);
     }
 
+    @Override
     public void run() {
         while (!pleaseTerminate) {
             for (TTSoftDevice device : devices) {
