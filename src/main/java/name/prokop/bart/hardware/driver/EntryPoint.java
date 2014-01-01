@@ -4,7 +4,7 @@
  */
 package name.prokop.bart.hardware.driver;
 
-import name.prokop.bart.runtime.RuntimeEngineDaemon;
+import name.prokop.bart.runtime.RuntimeEntryPoint;
 
 /**
  *
@@ -13,6 +13,6 @@ import name.prokop.bart.runtime.RuntimeEngineDaemon;
 public class EntryPoint {
 
     public static void main(String... args) throws Exception {
-        RuntimeEngineDaemon.cmdLineEntryPoint();
+        RuntimeEntryPoint.main(args);
     }
 }
